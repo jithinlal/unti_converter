@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unit_converter/unit.dart';
 import 'package:meta/meta.dart';
-import 'package:unit_converter/converter_route.dart';
+
+import 'converter_route.dart';
+import 'unit.dart';
 
 final _rowHeight = 100.0;
 final _borderRadius = BorderRadius.circular(_rowHeight / 2);
@@ -12,7 +13,7 @@ class Category extends StatelessWidget {
   final IconData iconLocation;
   final List<Unit> units;
 
-  Category({
+  const Category({
     Key key,
     @required this.name,
     @required this.color,
@@ -20,31 +21,32 @@ class Category extends StatelessWidget {
     @required this.units,
   })  : assert(name != null),
         assert(color != null),
+        assert(iconLocation != null),
         assert(units != null),
-        assert(iconLocation != null);
+        super(key: key);
 
   void _navigateToConverter(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-              appBar: AppBar(
-                elevation: 1.0,
-                title: Text(
-                  name,
-                  style: Theme.of(context).textTheme.display1,
-                ),
-                centerTitle: true,
-                backgroundColor: color,
-              ),
-              body: ConverterRoute(
-                color: color,
-                name: name,
-                units: units,
-              ),
+    Navigator.of(context).push(MaterialPageRoute<Null>(
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 1.0,
+            title: Text(
+              name,
+              style: Theme.of(context).textTheme.display1,
             ),
-      ),
-    );
+            centerTitle: true,
+            backgroundColor: color,
+          ),
+          body: ConverterRoute(
+            color: color,
+            name: name,
+            units: units,
+          ),
+          resizeToAvoidBottomPadding: false,
+        );
+      },
+    ));
   }
 
   @override
@@ -53,31 +55,32 @@ class Category extends StatelessWidget {
       color: Colors.transparent,
       child: Container(
         height: _rowHeight,
-        padding: EdgeInsets.all(8.0),
         child: InkWell(
-          splashColor: color,
           borderRadius: _borderRadius,
-          onTap: () {
-            _navigateToConverter(context);
-          },
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Icon(
-                  iconLocation,
-                  size: 60.0,
+          highlightColor: color['highlight'],
+          splashColor: color['splash'],
+          onTap: () => _navigateToConverter(context),
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Icon(
+                    iconLocation,
+                    size: 60.0,
+                  ),
                 ),
-              ),
-              Center(
-                child: Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline,
+                Center(
+                  child: Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
